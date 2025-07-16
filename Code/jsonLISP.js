@@ -16,7 +16,9 @@ var jsonLISP = {
 							split("\\\\").join("\\");
 					}
 				}
-			).join("").replace(",]", "]") +
+			).filter((token, index, array) => {
+				return token != "," || !/^\,|\]$/g.test(array[index + 1])
+			}).join("") +
 			"]"
 		);	
 	},
