@@ -1,34 +1,112 @@
-/*
-
-	state = {
-		data: [[JSON_LISP_CODE...]...],
-		thread: {
-			common: {
-				state: {
-					data: {
-						global: {
-							use: null / (state, threadIndex) => { ... },
-							...
-						},
-						local: { ... }
-					},
-					stack: { ... }
-				}
-			},
-			local: {
-				args: [...],
-				index: { index: [...], descending: t/f },
-				return: ...
-			},
-			children: { ... }
-		}
-	}
-
- */
-
 var fusionLISP = {
-	run: (state) => {
-		// STUB
+	defaultContext: {
+		list: [],
+		operators: { },
+		state: { },
+		index: [],
+		args: [],
+		recompile: false,
+		value: null
+	},
+	onPath: (index, current) => {
+
+		let len = Math.min(index.length, current.length);
+
+		if(len == 0)
+			return false;
+
+		for(let i = 0; i < len; i++) {
+
+			if(index[i] != current[i])
+				return index[i] > current[i];
+		}
+
+		return index.length >= current.length;
+	},
+	construct: (list, operators, state, index, current) => {
+
+		current = current != null ? current : [];
+
+		if(fusionLISP.onPath(index, current))
+			return "";
+
+		if(typeof list == "string") {
+
+			return (operators[list] != null ?
+				operators[list](state, []) : list);
+		}
+
+		if(list.length == 0)
+			return "";
+
+		let args = list.slice(1).map((item, i) => fusionLISP.construct(
+			item, operators, state, index, current.concat([i + 1])
+		));
+
+		if(typeof list[0] == "object") {
+
+			return [fusionLISP.construct(
+				list[0], operators, state, index, current.concat([0])
+			)].concat(args).join("");
+		}
+
+		return operators[list[0]] != null ?
+			operators[list[0]](Object.assign(
+				JSON.parse(JSON.stringify(fusionLISP.defaultContext)),
+				{
+					current, index, list, operators, state
+				}
+			), args) :
+			(state[list[0]] != null ?
+				`(${list[0]})(${args.join(",")})\n` : ""
+			);
+	},
+	operate: (context) => {
+
+		if(Array.isArray(context))
+			context = { list: context };
+		
+		context = Object.assign(
+			JSON.parse(JSON.stringify(fusionLISP.defaultContext)), context
+		);
+
+		if(typeof context.operators.use != "function") {
+
+			context.operators.use = (context, args) => {
+
+				return `${
+					args.map(
+						item =>
+							`Object.assign(context.operators,use(${item}));`
+					).join("")
+				}context.recompile=true;context.index=${
+					JSON.stringify(context.current)
+				};return;`;
+			};
+		}
+		
+		while(true) {
+
+			(new Function("context", fusionLISP.construct(
+				context.list, context.operators, context.state, context.index
+			)))(
+				context, ...context.args
+			);
+
+			if(context.recompile) {
+
+				context.recompile = false;
+
+				continue;
+			}
+
+			break;
+		}
+
+		return context;
+	},
+	run: (list) => {
+		return fusionLISP.operate(list).value;
 	}
 };
 
