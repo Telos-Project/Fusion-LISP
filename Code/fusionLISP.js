@@ -78,7 +78,7 @@ var fusionLISP = {
 				item => typeof item != "function"
 			).length > 0) {
 
-				var apint = typeof apintUtils != "undefined" ?
+				let apint = typeof apintUtils != "undefined" ?
 					apintUtils : require("apint");
 
 				let result = { };
@@ -115,14 +115,28 @@ var fusionLISP = {
 				};return;`;
 			};
 		}
+
+		let pupUtils = typeof universalPreprocessor != "undefined" ?
+			universalPreprocessor : require("universal-preprocessor");
+
+		let pupLanguages = typeof pupLangs != "undefined" ?
+			pupLangs : require("universal-preprocessor/pupLangs");
+
+		let pupActive = pupUtils != null && pupLanguages != null ?
+			Object.keys(pupUtils).length > 0 &&
+				Object.keys(pupLanguages).length > 0 :
+			false;
 		
 		while(true) {
 
-			(new Function("context", fusionLISP.construct(
+			let src = fusionLISP.construct(
 				context.list, context.operators, context.state, context.index
-			)))(
-				context, ...context.args
 			);
+
+			if(pupActive)
+				src = pupUtils.preprocess(pupLanguages, src);
+
+			(new Function("context", src))(context, ...context.args);
 
 			if(context.recompile) {
 
