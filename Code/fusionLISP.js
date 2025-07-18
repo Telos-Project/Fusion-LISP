@@ -70,6 +70,35 @@ var fusionLISP = {
 			JSON.parse(JSON.stringify(fusionLISP.defaultContext)), context
 		);
 
+		context.use = (path) => {
+
+			let item = use(path);
+
+			if(Object.values(item).filter(
+				item => typeof item != "function"
+			).length > 0) {
+
+				var apint = typeof apintUtils != "undefined" ?
+					apintUtils : require("apint");
+
+				let result = { };
+				
+				apint.queryUtilities(
+					item, null, { type: "fusion-lisp" }
+				).forEach(item => Object.assign(
+					result,
+					use(
+						Array.isArray(item.source) ?
+							item.source[0] : item.source
+					)
+				));
+
+				item = result;
+			}
+
+			return item;
+		};
+
 		if(typeof context.operators.use != "function") {
 
 			context.operators.use = (context, args) => {
@@ -77,7 +106,9 @@ var fusionLISP = {
 				return `${
 					args.map(
 						item =>
-							`Object.assign(context.operators,use(${item}));`
+							`Object.assign(context.operators,context.use(${
+								item
+							}));`
 					).join("")
 				}context.recompile=true;context.index=${
 					JSON.stringify(context.current)

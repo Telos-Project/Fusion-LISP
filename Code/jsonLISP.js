@@ -18,6 +18,8 @@ var jsonLISP = {
 				}
 			).filter((token, index, array) => {
 				return token != "," || !/^\,|\]$/g.test(array[index + 1])
+			}).map((token, index, array) => {
+				return token == "]" && array[index + 1] == "[" ? "]," : token;
 			}).join("") +
 			"]"
 		);	

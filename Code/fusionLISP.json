@@ -1,0 +1,10 @@
+{
+	"utilities": {
+		"standard": {
+			"source": "fusion-lisp/standard.js",
+			"properties": {
+				"type": "fusion-lisp"
+			}
+		}
+	}
+}
