@@ -5,11 +5,26 @@ module.exports = {
 	"and": (context, args) => {
 		return `(${args.join("&&")})`;
 	},
+	"arguments": (context, args) => {
+		return `arguments.slice(1)`;
+	},
+	"at": (context, args) => {
+		return `${args[0]}[${args[1]}]`;
+	},
 	"break": (context, args) => {
-		return `if(${args[0]})break;`;
+		return args.length > 0 ? `if(${args[0]})break;` : "break;";
+	},
+	"define": (context, args) => {
+
+		return `(...args)=>(let arguments=[null].concat(args);${
+			args.join("")
+		})`;
 	},
 	"divide": (context, args) => {
 		return `(${args.join("/")})`;
+	},
+	"do": (context, args) => {
+		return `${args[0]}(${args.slice(1).join(",")})`;
 	},
 	"equals": (context, args) => {
 
@@ -19,6 +34,9 @@ module.exports = {
 			str.push(`${args[i]}==${args[i + 1]}`)
 
 		return `(${str.join("&&")})`;
+	},
+	"evaluate": (context, args) => {
+		return `eval(${args[0]});`;
 	},
 	"greater": (context, args) => {
 
@@ -38,8 +56,11 @@ module.exports = {
 
 		return `(${str.join("&&")})`;
 	},
+	"list": (context, args) => {
+		return `[${args.join(",")}]`;
+	},
 	"loop": (context, args) => {
-		return `if(${args[0]})continue;`;
+		return args.length > 0 ? `if(${args[0]})continue;` : "continue;";
 	},
 	"multiply": (context, args) => {
 
@@ -58,6 +79,9 @@ module.exports = {
 	},
 	"print": (context, args) => {
 		return `console.log(${args.join(",")});`;
+	},
+	"random": (context, args) => {
+		return `Math.random()`;
 	},
 	"return": (context, args) => {
 		
