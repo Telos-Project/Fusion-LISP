@@ -63,10 +63,7 @@ module.exports = {
 		return args.length > 0 ? `if(${args[0]})continue;` : "continue;";
 	},
 	"multiply": (context, args) => {
-
-		return context.state[args[0]] != null ?
-			`${args[0]}=context.state[${[args[0]]}];` :
-			`${args[0]}=${args[1]},context.state["${args[0]}"]=${args[0]},`;
+		return `(${args.join("*")})`;
 	},
 	"modulus": (context, args) => {
 		return `(${args.join("%")})`;
