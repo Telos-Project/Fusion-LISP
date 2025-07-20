@@ -6,7 +6,7 @@ module.exports = {
 		return `(${args.join("&&")})`;
 	},
 	"arguments": (context, args) => {
-		return `arguments.slice(1)`;
+		return `Array.from(arguments).slice(1)`;
 	},
 	"at": (context, args) => {
 		return `${args[0]}[${args[1]}]`;
@@ -16,15 +16,15 @@ module.exports = {
 	},
 	"define": (context, args) => {
 
-		return `(...args)=>(let arguments=[null].concat(args);${
-			args.join("")
-		})`;
+		return `(...args)=>{let arguments=[null].concat(args);${
+			args.join("\n")
+		}}\n`;
 	},
 	"divide": (context, args) => {
 		return `(${args.join("/")})`;
 	},
 	"do": (context, args) => {
-		return `${args[0]}(${args.slice(1).join(",")})`;
+		return `${args[0]}(${args.slice(1).join(",")})\n`;
 	},
 	"equals": (context, args) => {
 
@@ -99,7 +99,13 @@ module.exports = {
 			`${args[0]}=context.state[${[args[0]]}];` :
 			`${args[0]}=${args[1]},context.state["${args[0]}"]=${args[0]};`;
 	},
+	"size": (context, args) => {
+		return `(${args[0]}).length`;
+	},
 	"subtract": (context, args) => {
 		return `(${args.join("-")})`;;
+	},
+	"xor": (context, args) => {
+		return `(${args.join("^")})`;;
 	}
 };

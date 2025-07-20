@@ -150,8 +150,56 @@ var fusionLISP = {
 
 		return context;
 	},
-	run: (list) => {
-		return fusionLISP.operate(list).value;
+	run: (list, args) => {
+
+		if(typeof list == "string") {
+
+			let pupUtils = typeof universalPreprocessor != "undefined" ?
+				universalPreprocessor : require("universal-preprocessor");
+
+			let pupLanguages = typeof pupLangs != "undefined" ?
+				pupLangs : require("universal-preprocessor/pupLangs");
+
+			let pupActive = pupUtils != null && pupLanguages != null ?
+				Object.keys(pupUtils).length > 0 &&
+					Object.keys(pupLanguages).length > 0 :
+				false;
+
+			if(pupActive)
+				list = pupUtils.preprocess(pupLanguages, list);
+
+			try {
+				list = JSON.parse(list);
+			}
+
+			catch(error) {
+
+				if(list.trim().startsWith("(") &&
+					list.trim().endsWith(")") &&
+					(list.match(/\(/g) || []).length ==
+						(list.match(/\)/g) || []).length
+				) {
+
+					let parser = typeof jsonLISP != "undefined" ?
+						jsonLISP : require("./jsonLISP.js");
+
+					list = parser.toJSON(list);
+				}
+
+				else {
+
+					let parser = typeof oneLang != "undefined" ?
+						oneLang : require("one-parser");
+
+					list = parser.toList(parser.read(list));
+				}
+					
+			}
+		}
+
+		return fusionLISP.operate({
+			list: list, args: args != null ? args : []
+		}).value;
 	}
 };
 
