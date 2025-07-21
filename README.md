@@ -45,6 +45,33 @@ LISP style code is considered the default practice.
 If the code is written in ONE or ONE+ format, it shall be converted to a
 [ONE list](https://github.com/Telos-Project/ONE?tab=readme-ov-file#2712---one-list).
 
+#### 2.1.2 - Processing
+
+Fusion LISP may be implemented in any way which enables operators to be executed in a recursive
+LISP style flow, which allows for jumping and dynamic code restructuring at runtime, and which
+allows the use operator to operate as described, on both literal and dynamic arguments.
+
+That said, the implementation provided herein takes the following general approach:
+
+First, it creates a context object which contains, among other things, a malleable list of
+transpilation functions mapped to specific operators, a retranspilation flag, set to false by
+default, a string arguments list containing arguments passed to the process, and a return value
+field which represent the return value of the process. Said list contains a function for the use
+operator by default.
+
+Then, it recursively transpiles the code into the host language of the interpreter using the
+operator function list, with the context object being passed to said functions. The transpiled code
+may contain Universal Preprocessor directives, which will be processed before the execution of the
+code.
+
+Next, it executes the transpiled code, to which it passes the context object, and which may modify
+the contents of the context object.
+
+After the transpiled code has exited, the restranspilation flag will be checked, and if true, the
+aforementioned process will repeat and the flag will reset to false. If the flag remains false
+after the transpiled code has executed, the process will exit and the return value contained in the
+context object will be returned.
+
 ### 2.2 - Usage
 
 #### 2.2.1 - Running
