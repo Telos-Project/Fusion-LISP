@@ -36,7 +36,7 @@ module.exports = {
 		return `(${str.join("&&")})`;
 	},
 	"evaluate": (context, args) => {
-		return `eval(${args[0]});`;
+		return `eval(${args[0]})\n`;
 	},
 	"greater": (context, args) => {
 
@@ -88,7 +88,7 @@ module.exports = {
 			args.join(",")
 		}${
 			args.length > 1 ? "]" : ""
-		};return;`;
+		};return context.value;`;
 	},
 	"scope": (context, args) => {
 		return `while(true){${args.join(";")}break;}`;
