@@ -9,12 +9,13 @@ Fusion LISP is a LISP dialect, which works as follows:
 At the start of execution, the only operator available is the "use" operator, with all other atoms
 returning their own value as a string. The use operator takes each argument returned to it as a
 string, and interprets them as paths or aliases to plugins for the interpreter, which are then
-integrated at runtime. Said plugins may add or remove available operators, which themselves may
-have any effect.
+integrated at runtime. Said plugins contain LISP dialects, which are applied to Fusion LISP by
+altering the currently available operators and their behavior. As such, free mixing of pre-existing
+LISP dialects is permitted within Fusion LISP.
 
 The absolute minimalism of its core form and the ability to indefinitely extend its functionality
 at runtime render Fusion LISP essentially an ultra-distilled successor to Racket insofar as
-language experimentaion is concerned.
+language experimentation is concerned.
 
 Furthermore, if used together with the
 [Universal Preprocessor](https://github.com/Telos-Project/Universal-Preprocessor), its syntax
@@ -80,7 +81,7 @@ context object will be returned.
 
 Fusion LISP is available as both a library and an executable under the package name "fusion-lisp".
 
-In node and npm are installed, this package can be used to run a Fusion LISP file in the terminal.
+If node and npm are installed, this package can be used to run a Fusion LISP file in the terminal.
 
 For example, if you had a Fusion LISP file called "demo.lisp", you could run it with the following
 command:
@@ -91,10 +92,11 @@ Arguments for the process may be appended to the command following the file name
 
     npx fusion-lisp demo.lisp arg1 arg2 arg3
 
-#### 2.2.2 - The Standard Plugin
+#### 2.2.2 - Standard Fusion LISP
 
-The standard plugin is a Fusion LISP plugin made to serve as the "default" plugin for Fusion LISP,
-granting it a minimum viable operator set to enable general purpose imperative programming.
+Standard Fusion LISP (SF-LISP) is a LISP dialect made to serve as the "default" dialect, and
+default plugin, for Fusion LISP, granting it a minimum viable operator set to enable general
+purpose imperative programming.
 
 It is exported from the fusion-lisp npm package, and from the following CDN link:
 
