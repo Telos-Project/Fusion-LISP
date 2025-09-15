@@ -1,111 +1,240 @@
-module.exports = {
-	"add": (context, args) => {
-		return `(${args.join("+")})`;
-	},
-	"and": (context, args) => {
-		return `(${args.join("&&")})`;
-	},
-	"arguments": (context, args) => {
-		return `Array.from(arguments).slice(1)`;
-	},
-	"at": (context, args) => {
-		return `${args[0]}[${args[1]}]`;
-	},
-	"break": (context, args) => {
-		return args.length > 0 ? `if(${args[0]})break;` : "break;";
-	},
-	"define": (context, args) => {
+module.exports = [
+	{
+		process: (context, args) => {
 
-		return `(...args)=>{let arguments=[null].concat(args);${
-			args.join("\n")
-		}}\n`;
+			return context.local.operator == "add" ?
+				`(${args.join("+")})` : null;
+		},
+		tags: ["standard", "add"]
 	},
-	"divide": (context, args) => {
-		return `(${args.join("/")})`;
-	},
-	"do": (context, args) => {
-		return `${args[0]}(${args.slice(1).join(",")})\n`;
-	},
-	"equals": (context, args) => {
+	{
+		process: (context, args) => {
 
-		let str = [];
+			return context.local.operator == "and" ?
+				`(${args.join("&&")})` : null;
+		},
+		tags: ["standard", "and"]
+	},
+	{
+		process: (context, args) => {
 
-		for(let i = 0; i < args.length - 1; i++)
-			str.push(`${args[i]}==${args[i + 1]}`)
+			return context.local.operator == "arguments" ?
+				`Array.from(arguments).slice(1)` : null;
+		},
+		tags: ["standard", "arguments"]
+	},
+	{
+		process: (context, args) => {
 
-		return `(${str.join("&&")})`;
+			return context.local.operator == "at" ?
+				`${args[0]}[${args[1]}]` : null;
+		},
+		tags: ["standard", "at"]
 	},
-	"evaluate": (context, args) => {
-		return `eval(${args[0]})\n`;
-	},
-	"greater": (context, args) => {
+	{
+		process: (context, args) => {
 
-		let str = [];
+			return context.local.operator == "break" ?
+				(args.length > 0 ? `if(${args[0]})break;` : "break;") : null;
+		},
+		tags: ["standard", "break"]
+	},
+	{
+		process: (context, args) => {
 
-		for(let i = 0; i < args.length - 1; i++)
-			str.push(`${args[i]}>${args[i + 1]}`)
+			return context.local.operator == "define" ?
+				`(...args)=>{let arguments=[null].concat(args);${
+					args.join("\n")
+				}}\n` : null;
+		},
+		tags: ["standard", "define"]
+	},
+	{
+		process: (context, args) => {
 
-		return `(${str.join("&&")})`;
+			return context.local.operator == "divide" ?
+				`(${args.join("/")})` : null;
+		},
+		tags: ["standard", "divide"]
 	},
-	"less": (context, args) => {
+	{
+		process: (context, args) => {
 
-		let str = [];
+			return context.local.operator == "do" ?
+				`${args[0]}(${args.slice(1).join(",")})\n` : null;
+		},
+		tags: ["standard", "do"]
+	},
+	{
+		process: (context, args) => {
 
-		for(let i = 0; i < args.length - 1; i++)
-			str.push(`${args[i]}<${args[i + 1]}`)
+			return context.local.operator == "equals" ?
+				`(${args.map((item, index) => {
 
-		return `(${str.join("&&")})`;
+					return index < args.length - 1 ?
+						`${args[index]}==${args[index + 1]}` : "true";
+				}).join("&&")})` : null;
+		},
+		tags: ["standard", "equals"]
 	},
-	"list": (context, args) => {
-		return `[${args.join(",")}]`;
-	},
-	"loop": (context, args) => {
-		return args.length > 0 ? `if(${args[0]})continue;` : "continue;";
-	},
-	"multiply": (context, args) => {
-		return `(${args.join("*")})`;
-	},
-	"modulus": (context, args) => {
-		return `(${args.join("%")})`;
-	},
-	"not": (context, args) => {
-		return `(${args.map(item => `!${item}`).join("&&")})`;
-	},
-	"or": (context, args) => {
-		return `(${args.join("||")})`;
-	},
-	"print": (context, args) => {
-		return `console.log(${args.join(",")});`;
-	},
-	"random": (context, args) => {
-		return `Math.random()`;
-	},
-	"return": (context, args) => {
-		
-		return `context.value=${
-			args.length > 1 ? "[" : ""
-		}${
-			args.join(",")
-		}${
-			args.length > 1 ? "]" : ""
-		};return context.value;`;
-	},
-	"scope": (context, args) => {
-		return `while(true){${args.join(";")}break;}`;
-	},
-	"set": (context, args) => {
+	{
+		process: (context, args) => {
 
-		return context.state[args[0]] != null ?
-			`${args[0]}=context.state[${[args[0]]}];` :
-			`${args[0]}=${args[1]},context.state["${args[0]}"]=${args[0]};`;
+			return context.local.operator == "evaluate" ?
+				`eval(${args[0]})\n` : null;
+		},
+		tags: ["standard", "evaluate"]
 	},
-	"size": (context, args) => {
-		return `(${args[0]}).length`;
+	{
+		process: (context, args) => {
+
+			return context.local.operator == "greater" ?
+				`(${args.map((item, index) => {
+
+					return index < args.length - 1 ?
+						`${args[index]}>${args[index + 1]}` : "true";
+				}).join("&&")})` : null;
+		},
+		tags: ["standard", "greater"]
 	},
-	"subtract": (context, args) => {
-		return `(${args.join("-")})`;;
+	{
+		process: (context, args) => {
+
+			return context.local.operator == "less" ?
+				`(${args.map((item, index) => {
+
+					return index < args.length - 1 ?
+						`${args[index]}<${args[index + 1]}` : "true";
+				}).join("&&")})` : null;
+		},
+		tags: ["standard", "less"]
 	},
-	"xor": (context, args) => {
-		return `(${args.join("^")})`;;
+	{
+		process: (context, args) => {
+
+			return context.local.operator == "list" ?
+				`[${args.join(",")}]` : null;
+		},
+		tags: ["standard", "list"]
+	},
+	{
+		process: (context, args) => {
+
+			return context.local.operator == "loop" ?
+				(args.length > 0 ? `if(${args[0]})continue;` : "continue;") :
+				null;
+		},
+		tags: ["standard", "loop"]
+	},
+	{
+		process: (context, args) => {
+
+			return context.local.operator == "multiply" ?
+				`(${args.join("*")})` : null;
+		},
+		tags: ["standard", "multiply"]
+	},
+	{
+		process: (context, args) => {
+
+			return context.local.operator == "modulus" ?
+				`(${args.join("%")})` : null;
+		},
+		tags: ["standard", "modulus"]
+	},
+	{
+		process: (context, args) => {
+
+			return context.local.operator == "not" ?
+				`(${args.map(item => `!${item}`).join("&&")})` : null;
+		},
+		tags: ["standard", "not"]
+	},
+	{
+		process: (context, args) => {
+
+			return context.local.operator == "or" ?
+				`(${args.join("||")})` : null;
+		},
+		tags: ["standard", "or"]
+	},
+	{
+		process: (context, args) => {
+
+			return context.local.operator == "print" ?
+				`console.log(${args.join(",")});` : null;
+		},
+		tags: ["standard", "print"]
+	},
+	{
+		process: (context, args) => {
+			return context.local.operator == "random" ? `Math.random()` : null;
+		},
+		tags: ["standard", "random"]
+	},
+	{
+		process: (context, args) => {
+
+			return context.local.operator == "return" ?
+				`context.value=${
+					args.length > 1 ? "[" : ""
+				}${
+					args.join(",")
+				}${
+					args.length > 1 ? "]" : ""
+				};return context.value;` : null;
+		},
+		tags: ["standard", "return"]
+	},
+	{
+		process: (context, args) => {
+
+			return context.local.operator == "scope" ?
+				`while(true){${args.join(";")}break;}` : null;
+		},
+		tags: ["standard", "scope"]
+	},
+	{
+		process: (context, args) => {
+
+			return context.local.operator == "set" ?
+				(context.state[args[0]] != null ?
+					`${args[0]}=context.state[${args[0]}];` :
+					`${
+						args[0]
+					}=${
+						args[1]
+					},context.state["${
+						args[0]
+					}"]=${
+						args[0]
+					};`
+				) : null;
+		},
+		tags: ["standard", "set"]
+	},
+	{
+		process: (context, args) => {
+
+			return context.local.operator == "size" ?
+				`(${args[0]}).length` : null;
+		},
+		tags: ["standard", "size"]
+	},
+	{
+		process: (context, args) => {
+
+			return context.local.operator == "subtract" ?
+				`(${args.join("-")})` : null;
+		},
+		tags: ["standard", "subtract"]
+	},
+	{
+		process: (context, args) => {
+
+			return context.local.operator == "xor" ?
+				`(${args.join("^")})` : null;
+		},
+		tags: ["standard", "xor"]
 	}
-};
+];

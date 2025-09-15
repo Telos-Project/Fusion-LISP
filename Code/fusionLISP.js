@@ -1,28 +1,4 @@
 var fusionLISP = {
-	defaultContext: {
-		list: [],
-		operators: { },
-		state: { },
-		index: [],
-		args: [],
-		recompile: false,
-		value: null
-	},
-	onPath: (index, current) => {
-
-		let len = Math.min(index.length, current.length);
-
-		if(len == 0)
-			return false;
-
-		for(let i = 0; i < len; i++) {
-
-			if(index[i] != current[i])
-				return index[i] > current[i];
-		}
-
-		return index.length >= current.length;
-	},
 	construct: (list, operators, state, index, current) => {
 
 		current = current != null ? current : [];
@@ -30,10 +6,18 @@ var fusionLISP = {
 		if(fusionLISP.onPath(index, current))
 			return "";
 
+		let newContext = Object.assign(
+			JSON.parse(JSON.stringify(fusionLISP.defaultContext)),
+			{
+				current, index, list, operators, state
+			}
+		);
+
 		if(typeof list == "string") {
 
-			return (operators[list] != null ?
-				operators[list](state, []) : list);
+			let operation = fusionLISP.getOperation([list], newContext, []);
+
+			return operation != null ? operation : list;
 		}
 
 		if(list.length == 0)
@@ -50,16 +34,59 @@ var fusionLISP = {
 			)].concat(args).join("");
 		}
 
-		return operators[list[0]] != null ?
-			operators[list[0]](Object.assign(
-				JSON.parse(JSON.stringify(fusionLISP.defaultContext)),
-				{
-					current, index, list, operators, state
-				}
-			), args) :
+		let operation = fusionLISP.getOperation(list, newContext, args);
+
+		return operation != null ?
+			operation :
 			(state[list[0]] != null ?
 				`(${list[0]})(${args.join(",")})\n` : ""
 			);
+	},
+	defaultContext: {
+		list: [],
+		operators: [],
+		state: { },
+		index: [],
+		args: [],
+		recompile: false,
+		value: null
+	},
+	getOperation(list, context, args) {
+
+		if(typeof list[0] != "string")
+			return null;
+
+		let newContext = Object.assign(
+			{ local: { operator: list[0], list: list }},
+			context
+		);
+
+		for(let i = context.operators.length - 1; i >= 0; i--) {
+
+			let operation = context.operators[i].process(
+				newContext, args
+			);
+
+			if(typeof operation != "undefined" ? operation != null : false)
+				return operation;
+		}
+
+		return null;
+	},
+	onPath: (index, current) => {
+
+		let len = Math.min(index.length, current.length);
+
+		if(len == 0)
+			return false;
+
+		for(let i = 0; i < len; i++) {
+
+			if(index[i] != current[i])
+				return index[i] > current[i];
+		}
+
+		return index.length >= current.length;
 	},
 	operate: (context) => {
 
@@ -73,6 +100,9 @@ var fusionLISP = {
 		context.use = (path) => {
 
 			let item = use(path);
+			
+			if(Array.isArray(item))
+				return item;
 
 			if(Object.values(item).filter(
 				item => typeof item != "function"
@@ -99,21 +129,32 @@ var fusionLISP = {
 			return item;
 		};
 
-		if(typeof context.operators.use != "function") {
+		if(context.operators.filter(item => {
 
-			context.operators.use = (context, args) => {
+			return Array.isArray(item.tags) ?
+				item.tags.length == 1 && item.tags[0] == "use" : false;
+		})) {
 
-				return `${
-					args.map(
-						item =>
-							`Object.assign(context.operators,context.use(${
-								item
-							}));`
-					).join("")
-				}context.recompile=true;context.index=${
-					JSON.stringify(context.current)
-				};return;`;
-			};
+			context.operators.push({
+				process: (context, args) => {
+
+					return context.local.operator == "use" ?
+						`${
+							args.map(item =>
+								`Object.values(context.use(${
+									item
+								})).forEach(
+									operator =>
+										context.operators.push(operator)
+								);`
+							).join("")
+						}context.recompile=true;context.index=${
+							JSON.stringify(context.current)
+						};return;` :
+						null;
+				},
+				tags: ["use"]
+			});
 		}
 
 		let pupUtils = typeof universalPreprocessor != "undefined" ?
