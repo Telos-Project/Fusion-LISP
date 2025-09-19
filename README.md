@@ -257,27 +257,32 @@ otherwise.
 ### 2.3 - Plugins
 
 For the JavaScript implementation of Fusion LISP provided herein, plugins may be implemented as
-JavaScript objects, where every field contains an operator function, the alias of the field
-specifying the operator to which the function applies.
+JavaScript lists, where every element is an operator object.
 
-An operator function shall take two arguments, the first being the context object described in
+An operator object shall have a "process" function, which shall take two arguments, the first being
+the context object described in
 [section 2.1.2](https://github.com/Telos-Project/Fusion-LISP?tab=readme-ov-file#212---processing),
 and the second being a list of the strings returned from processing, in order, the children of the
 operator. The function shall transpile the operator into code in the host language of the
-interpreter, that being JavaScript in this case, and shall return said code as a string.
+interpreter, that being JavaScript in this case, and shall return said code as a string. An
+operator object may also have a "tags" list of string tags for identification and classification.
 
 The context object shall be formatted as follows:
 
     {
+    	args: [], // The string arguments passed to the process.
+    	index: [], // A numerical path from the root of the file to the current operator.
+    	local: { // Details of the operator currently being processed. (For compilation use only.)
+    		operator: "..." // The string content of the operator.
+    		list: [] // The list and sublists for which the operator is the root.
+    	},
     	list: [], // The source code of the file.
     	operators: { }, // The map of operator functions.
-    	state: { }, // Miscellaneous data retained between processing steps.
-    	index: [], // A numerical path from the root of the file to the current operator.
-    	args: [], // The string arguments passed to the process.
     	recompile: false, // The retranspilation flag. (For execution use only.)
+    	state: { }, // Miscellaneous data retained between processing steps.
     	value: null // The return value of the process. (For execution use only.)
     }
 
-A plugin may be distributed as a CommonJS module exporting a plugin object, or as an
+A plugin may be distributed as a CommonJS module exporting an operator object list, or as an
 [APInt](https://github.com/Telos-Project/APInt) JSON file with multiple utilities linking to such
 CommonJS modules, identified with a "type" property containing the string "fusion-lisp".
