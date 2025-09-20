@@ -159,14 +159,6 @@ var fusionLISP = {
 
 		let pupUtils = typeof universalPreprocessor != "undefined" ?
 			universalPreprocessor : require("universal-preprocessor");
-
-		let pupLanguages = typeof pupLangs != "undefined" ?
-			pupLangs : require("universal-preprocessor/pupLangs");
-
-		let pupActive = pupUtils != null && pupLanguages != null ?
-			Object.keys(pupUtils).length > 0 &&
-				Object.keys(pupLanguages).length > 0 :
-			false;
 		
 		while(true) {
 
@@ -174,8 +166,8 @@ var fusionLISP = {
 				context.list, context.operators, context.state, context.index
 			);
 
-			if(pupActive)
-				src = pupUtils.preprocess(pupLanguages, src);
+			if(pupUtils != null ? Object.keys(pupUtils).length > 0 : false)
+				src = pupUtils.preprocess(src, context.args);
 
 			(new Function("context", src))(context, ...context.args);
 
@@ -198,16 +190,8 @@ var fusionLISP = {
 			let pupUtils = typeof universalPreprocessor != "undefined" ?
 				universalPreprocessor : require("universal-preprocessor");
 
-			let pupLanguages = typeof pupLangs != "undefined" ?
-				pupLangs : require("universal-preprocessor/pupLangs");
-
-			let pupActive = pupUtils != null && pupLanguages != null ?
-				Object.keys(pupUtils).length > 0 &&
-					Object.keys(pupLanguages).length > 0 :
-				false;
-
-			if(pupActive)
-				list = pupUtils.preprocess(pupLanguages, list);
+			if(pupUtils != null ? Object.keys(pupUtils).length > 0 : false)
+				list = pupUtils.preprocess(list, args);
 
 			try {
 				list = JSON.parse(list);
@@ -234,7 +218,6 @@ var fusionLISP = {
 
 					list = parser.toList(parser.read(list));
 				}
-					
 			}
 		}
 
