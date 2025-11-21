@@ -4,7 +4,7 @@ var jsonLISP = {
 		return JSON.parse(
 			"[" + 
 			code.trim().match(
-				/"((?:\\.|[^"\\])*)"|[()]|[^\s()"']+|\s+/g
+				/"(?:[^"\\]|\\.)*"|[()]|[^\s()"']+|\s+/g
 			).map(
 				token => {
 
@@ -12,8 +12,7 @@ var jsonLISP = {
 						case token == "(": return "[";
 						case token == ")": return "]";
 						case /^\s+$/g.test(token): return ",";
-						default: return JSON.stringify(token).
-							split("\\\\").join("\\");
+						default: return JSON.stringify(token);
 					}
 				}
 			).filter((token, index, array) => {
@@ -22,7 +21,7 @@ var jsonLISP = {
 				return token == "]" && array[index + 1] == "[" ? "]," : token;
 			}).join("") +
 			"]"
-		);	
+		);
 	},
 	toLISP: (data, nest) => {
 
@@ -30,18 +29,7 @@ var jsonLISP = {
 			typeof data == "string" ? JSON.parse(data) : data
 		).map(item => Array.isArray(item) ?
 			jsonLISP.toLISP(item, true) :
-			(typeof item == "string" ?
-				(item.match(/\s+|\(|\)|\"/) ?
-					(/^".*"$/.test(item) ?
-						JSON.stringify(
-							item.substring(1, item.length - 1)
-						) :
-						JSON.stringify(item)
-					) :
-					item
-				) :
-				"" + item
-			)
+			"" + item
 		).join(" ") + (nest ? ")" : "");
 	}
 };
