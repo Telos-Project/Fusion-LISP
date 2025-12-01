@@ -188,41 +188,46 @@ result.
 The "not" operator returns true if the boolean negation of all of its arguments are true, and
 returns false otherwise.
 
-##### 2.2.2.18 - or
+##### 2.2.2.18 - on
+
+The "on" operator takes a promise as its first argument, and a function as its second argument, and
+calls said function with the resolved value of said promise when said promise resolves.
+
+##### 2.2.2.19 - or
 
 The "or" operator returns true if at least one of its arguments is true, and false otherwise.
 
-##### 2.2.2.19 - print
+##### 2.2.2.20 - print
 
 The "print" operator logs all of its arguments in order to the console.
 
-##### 2.2.2.20 - random
+##### 2.2.2.21 - random
 
 The "random" operator returns a random number between zero and one.
 
-##### 2.2.2.21 - return
+##### 2.2.2.22 - return
 
 The "return" operator ends its scope. It returns to its parents scope its first argument if it has
 only one, and a list of its arguments if it has multiple.
 
-##### 2.2.2.22 - scope
+##### 2.2.2.23 - scope
 
 The "scope" operator establishes a scope in which its arguments may execute as expressions.
 
-##### 2.2.2.23 - set
+##### 2.2.2.24 - set
 
 The "set" operator sets a variable in its current scope, with its first argument specifying the
 alias thereof, and the second argument specifying the value.
 
-##### 2.2.2.24 - size
+##### 2.2.2.25 - size
 
 The "size" operator takes a list or string argument and returns its length.
 
-##### 2.2.2.25 - subtract
+##### 2.2.2.26 - subtract
 
 The "subtract" operator subtracts its arguments in order and returns the result.
 
-##### 2.2.2.26 - xor
+##### 2.2.2.27 - xor
 
 The "xor" operator returns true if one, and only one, of its arguments is true, and false
 otherwise.

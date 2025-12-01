@@ -153,6 +153,14 @@ module.exports = [
 	{
 		process: (context, args) => {
 
+			return context.local.operator == "on" ?
+				`(${args[0]}).then((value)=>{(${args[1]})(value);})\n` : null;
+		},
+		tags: ["standard", "on"]
+	},
+	{
+		process: (context, args) => {
+
 			return context.local.operator == "or" ?
 				`(${args.join("||")})` : null;
 		},
