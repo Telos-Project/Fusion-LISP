@@ -111,126 +111,211 @@ And in the terminal specifically, the following expression may also suffice:
 
     (use "fusion-lisp")
 
-##### 2.2.2.1 - add
+###### 2.2.2.1 - Operators
+
+###### 2.2.2.1.1 - add
 
 The "add" operator returns the sum of its arguments, if they are all numbers, or the concatenation
 of its arguments if any of them are strings.
 
-##### 2.2.2.2 - and
+###### 2.2.2.1.2 - and
 
 The "and" operator returns true if all of its arguments are true, and false otherwise.
 
-##### 2.2.2.3 - arguments
+###### 2.2.2.1.3 - arguments
 
 The "arguments" operator returns a list of the arguments passed to the current scope.
 
-##### 2.2.2.4 - at
+###### 2.2.2.1.4 - at
 
-The "at" operator takes a list as its first argument, and an integer number as its second, and
-returns the element of the former at the latter.
+The "at" operator takes a list as its first argument, with each subsequent argument being a list
+index, the first index resolving to the element in said list indexed by said index, and each
+subsequent index resolving to the element in the structure resolved to by its predecessor indexed
+by said index, with the operator returning what the final index resolves to.
 
-##### 2.2.2.5 - break
+###### 2.2.2.1.5 - break
 
 The "break" operator breaks out of the current scope. It may take a boolean argument, which will
 prevent its effect if false.
 
-##### 2.2.2.6 - define
+###### 2.2.2.1.6 - define
 
 The "define" operator takes various expressions as arguments, and returns an anonymous function
 with said expressions as its code.
 
-##### 2.2.2.7 - divide
+###### 2.2.2.1.7 - divide
 
 The "divide" operator divides its arguments in order and returns the result.
 
-##### 2.2.2.8 - do
+###### 2.2.2.1.8 - do
 
 The "do" operator takes a function as its first argument, executes it with each subsequent argument
 as arguments for said function, and returns the result.
 
-##### 2.2.2.9 - equals
+###### 2.2.2.1.9 - equals
 
 The "equals" operator returns true if all of its arguments are equal.
 
-##### 2.2.2.10 - evaluate
+###### 2.2.2.1.10 - evaluate
 
 The "evaluate" operator takes a string of code in the host language of the Fusion LISP interpreter,
 executes it, and returns the result.
 
-##### 2.2.2.11 - greater
+###### 2.2.2.1.11 - greater
 
 The "greater" operator returns true if each of its arguments is greater than the next.
 
-##### 2.2.2.12 - less
+###### 2.2.2.1.12 - less
 
 The "less" operator returns true if each of its arguments is less than the next.
 
-##### 2.2.2.13 - list
+###### 2.2.2.1.13 - list
 
 The list operator returns a list of all of its arguments.
 
-##### 2.2.2.14 - loop
+###### 2.2.2.1.14 - loop
 
 The "loop" operator resets and continues the current scope. It may take a boolean argument, which
 will prevent its effect if false.
 
-##### 2.2.2.15 - multiply
+###### 2.2.2.1.15 - multiply
 
 The "multiply" operator returns the product of its arguments.
 
-##### 2.2.2.16 - modulus
+###### 2.2.2.1.16 - modulus
 
 The "modulus" operator applies the modulus operation to its arguments in order and returns the
 result.
 
-##### 2.2.2.17 - not
+###### 2.2.2.1.17 - not
 
 The "not" operator returns true if the boolean negation of all of its arguments are true, and
 returns false otherwise.
 
-##### 2.2.2.18 - on
+###### 2.2.2.1.18 - on
 
 The "on" operator takes a promise as its first argument, and a function as its second argument, and
 calls said function with the resolved value of said promise when said promise resolves.
 
-##### 2.2.2.19 - or
+###### 2.2.2.1.19 - or
 
 The "or" operator returns true if at least one of its arguments is true, and false otherwise.
 
-##### 2.2.2.20 - print
+###### 2.2.2.1.20 - print
 
 The "print" operator logs all of its arguments in order to the console.
 
-##### 2.2.2.21 - random
+###### 2.2.2.1.21 - random
 
 The "random" operator returns a random number between zero and one.
 
-##### 2.2.2.22 - return
+###### 2.2.2.1.22 - return
 
 The "return" operator ends its scope. It returns to its parents scope its first argument if it has
 only one, and a list of its arguments if it has multiple.
 
-##### 2.2.2.23 - scope
+###### 2.2.2.1.23 - scope
 
 The "scope" operator establishes a scope in which its arguments may execute as expressions.
 
-##### 2.2.2.24 - set
+###### 2.2.2.1.24 - set
 
 The "set" operator sets a variable in its current scope, with its first argument specifying the
 alias thereof, and the second argument specifying the value.
 
-##### 2.2.2.25 - size
+###### 2.2.2.1.25 - size
 
 The "size" operator takes a list or string argument and returns its length.
 
-##### 2.2.2.26 - subtract
+###### 2.2.2.1.26 - subtract
 
 The "subtract" operator subtracts its arguments in order and returns the result.
 
-##### 2.2.2.27 - xor
+###### 2.2.2.1.27 - xor
 
 The "xor" operator returns true if one, and only one, of its arguments is true, and false
 otherwise.
+
+##### 2.2.2.2 - Dynamic LISP
+
+Dynamic LISP is a LISP convention, included in SF-LISP, which allows values in lists to have keys.
+
+A value with a key in a dynamic LISP list shall itself be nested as the third value in a sublist
+added in its place to the list to which it belongs, where the first value or operator of said
+sublist is a colon and the second value is the key.
+
+By default, value keys should be strings.
+
+For example:
+
+    (list value1 (: "key" value2))
+
+In the context of dynamic LISP, keyed values can be called dynamic values, and lists featuring
+dynamic values can be called dynamic lists. These concepts may be applied beyond dynamic LISP.
+
+Dynamic list values, be they dynamic or not, may be indexed by index or key.
+
+###### 2.1.1.1.1 - Dynamic Paths
+
+A dynamic path is a list of strings and numeric atoms which dictate a path from a root dynamic list
+to a value nested therein.
+
+Each element in the path selects a descendant of the value identified by the previous element, save
+for the first element, which identifies a descendant of the root list. A string element selects by
+key and a numeric element selects by index.
+
+Dynamic paths may either be applied in child mode or descendant mode. In the former, elements may
+only select from the immediate children of the values they are applied to. In the latter, they may
+select the nearest matching descendant as located using a breadth first traversal.
+
+###### 2.1.1.1.2 - Dynamic Metadata
+
+Dynamic metadata is a dynamic list convention regarding meta dynamic lists. A meta dynamic list is
+a dynamic list used for assigning properties to another dynamic list, referred to as the content
+list, without embedding said properties into the content list itself.
+
+A meta dynamic list has two values, one with the key "content", containing the content list, and
+one with the key "metadata", containing a list of property lists. Property lists are dynamic lists
+which have two values, one with the key "selector", containing a dynamic path to a value within the
+aforementioned content, and one with the key "properties", containing a miscellaneous value to
+associate with the selected value.
+
+For example:
+
+	(list
+		(: "content" (list value1 (: "key" value2)))
+		(: "metadata" (list
+			(list
+				(: "selector" ("key"))
+				(: "properties" (list prop1 prop2))
+			)
+		))
+	)
+
+###### 2.1.1.1.4 - DLN
+
+DLN (Dynamic List Notation) is a data interchange format where a file may contain a single lisp
+expression which resolves either to a list or to a string, number, boolean, or null primitive.
+
+DLN uses the list, dynamic list, and string, number, boolean, and null primitives present in
+SF-LISP to encode such expressions.
+
+DLN may use any syntax that Fusion LISP uses, but by default, in strict form, it uses LISP syntax
+without the universal presprocessor. DLN may use the file extension "dln", and if in strict form,
+it may also use "dlns".
+
+###### 2.1.1.1.5 - JSON Conversion
+
+When converting a dynamic list to JSON, a dynamic list with no dynamic values shall become a JSON
+list, and a dynamic list with dynamic values shall become a JSON object, with the order of the
+elements of said list preserved in the resulting object, and with non-dynamic values in said list
+receiving the stringified form of their index as their key.
+
+Ordinary lists within dynamic lists shall become JSON lists, non-stringified JSON compatible
+primitive atoms or LISP style equivalents (nil = null, etc), shall become JSON primitives, and all
+other atoms shall become JSON strings.
+
+JSON content may also be converted to dynamic lists.
 
 #### 2.2.3 - Examples
 

@@ -27,7 +27,12 @@ module.exports = [
 		process: (context, args) => {
 
 			return context.local.operator == "at" ?
-				`${args[0]}[${args[1]}]` : null;
+				`${
+					args[0]
+				}${
+					args.slice(1).map(item => `[${item}]`).join("")
+				}` :
+				null;
 		},
 		tags: ["standard", "at"]
 	},
@@ -113,7 +118,26 @@ module.exports = [
 		process: (context, args) => {
 
 			return context.local.operator == "list" ?
-				`[${args.join(",")}]` : null;
+				(
+					args.filter(item =>
+						item.startsWith(":{") && item.endsWith("}:")
+					).length > 0 ?
+						`{${args.map((item, index) =>
+							item.startsWith(":{") && item.endsWith("}:") ?
+								(value => `${
+									value.key
+								}:${
+									value.value
+								}`)(
+									JSON.parse(
+										item.substring(1, item.length - 1)
+									)
+								) :
+								`"${index}":${item}`
+						).join(",")}}` :
+						`[${args.join(",")}]`
+				) :
+				null;
 		},
 		tags: ["standard", "list"]
 	},
@@ -244,5 +268,18 @@ module.exports = [
 				`(${args.join("^")})` : null;
 		},
 		tags: ["standard", "xor"]
+	},
+	{
+		process: (context, args) => {
+
+			return context.local.operator == ":" ?
+				`:{"key":${
+					JSON.stringify("" + args[0])
+				},"value":${
+					JSON.stringify("" + args[1])
+				}}:` :
+				null;
+		},
+		tags: ["standard", ":"]
 	}
 ];
