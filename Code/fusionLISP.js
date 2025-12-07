@@ -185,6 +185,9 @@ var fusionLISP = {
 	},
 	run: (list, args) => {
 
+		if(typeof use == "undefined")
+			require("telos-use-js");
+
 		if(typeof list == "string") {
 
 			let pupUtils = typeof universalPreprocessor != "undefined" ?
