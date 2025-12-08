@@ -183,46 +183,52 @@ var fusionLISP = {
 
 		return context;
 	},
+	parse: (list, args) => {
+
+		if(Array.isArray(list))
+			return list;
+
+		let pupUtils = typeof universalPreprocessor != "undefined" ?
+			universalPreprocessor : require("universal-preprocessor");
+
+		if(pupUtils != null ? Object.keys(pupUtils).length > 0 : false)
+			list = pupUtils.preprocess(list, args);
+
+		try {
+			list = JSON.parse(list);
+		}
+
+		catch(error) {
+
+			if(list.trim().startsWith("(") &&
+				list.trim().endsWith(")") &&
+				(list.match(/\(/g) || []).length ==
+					(list.match(/\)/g) || []).length
+			) {
+
+				let parser = typeof jsonLISP != "undefined" ?
+					jsonLISP : require("./jsonLISP.js");
+
+				list = parser.toJSON(list);
+			}
+
+			else {
+
+				let parser = typeof oneLang != "undefined" ?
+					oneLang : require("one-parser");
+
+				list = parser.toList(parser.read(list));
+			}
+		}
+
+		return list;
+	},
 	run: (list, args) => {
 
 		if(typeof use == "undefined")
 			require("telos-use-js");
 
-		if(typeof list == "string") {
-
-			let pupUtils = typeof universalPreprocessor != "undefined" ?
-				universalPreprocessor : require("universal-preprocessor");
-
-			if(pupUtils != null ? Object.keys(pupUtils).length > 0 : false)
-				list = pupUtils.preprocess(list, args);
-
-			try {
-				list = JSON.parse(list);
-			}
-
-			catch(error) {
-
-				if(list.trim().startsWith("(") &&
-					list.trim().endsWith(")") &&
-					(list.match(/\(/g) || []).length ==
-						(list.match(/\)/g) || []).length
-				) {
-
-					let parser = typeof jsonLISP != "undefined" ?
-						jsonLISP : require("./jsonLISP.js");
-
-					list = parser.toJSON(list);
-				}
-
-				else {
-
-					let parser = typeof oneLang != "undefined" ?
-						oneLang : require("one-parser");
-
-					list = parser.toList(parser.read(list));
-				}
-			}
-		}
+		list = fusionLISP.parse(list, args);
 
 		return fusionLISP.operate({
 			list: list, args: args != null ? args : []
