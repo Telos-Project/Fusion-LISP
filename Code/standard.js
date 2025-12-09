@@ -236,7 +236,7 @@ module.exports = [
 						args[0]
 					}=${
 						args[1]
-					},context.state["${
+					};context.state["${
 						args[0]
 					}"]=${
 						args[0]

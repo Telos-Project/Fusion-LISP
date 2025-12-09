@@ -6,10 +6,16 @@ var jsonLISP = {
 			code.trim().match(
 				/"(?:[^"\\]|\\.)*"|[()]|[^\s()"']+|\s+/g
 			).map(
-				token => {
+				(token, index, tokens) => {
 
 					switch(true) {
-						case token == "(": return "[";
+						case token == "(": return `${
+							(
+								!/^\s+$/g.test(tokens[index - 1]) &&
+								tokens[index - 1] != "(" &&
+								index != 0
+							 ) ? "," : ""
+						}[`;
 						case token == ")": return "]";
 						case /^\s+$/g.test(token): return ",";
 						default: return JSON.stringify(token);
