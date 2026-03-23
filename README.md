@@ -111,7 +111,7 @@ And in the terminal specifically, the following expression may also suffice:
 
     (use "fusion-lisp")
 
-###### 2.2.2.1 - Operators
+##### 2.2.2.1 - Operators
 
 ###### 2.2.2.1.1 - add
 
@@ -317,9 +317,22 @@ other atoms shall become JSON strings.
 
 JSON content may also be converted to dynamic lists.
 
-#### 2.2.3 - Examples
+#### 2.2.3 - LISP Conversion
 
-##### 2.2.3.1 - Euler Problem #1
+LISP conversion is the usage of the AST of a given language as a LISP dialect.
+
+#### 2.2.3.1 - Pure LISP Conversion
+
+Pure LISP conversion is where the derived dialect only uses token's from the given language's
+default syntax as operators, to the extent possible.
+
+#### 2.2.3.2 - LISP Conversion Conventions
+
+Codified conventions for LISP converison are referred to as LISP conversion conventions.
+
+#### 2.2.4 - Examples
+
+##### 2.2.4.1 - Euler Problem #1
 
     (use "fusion-lisp")
 
