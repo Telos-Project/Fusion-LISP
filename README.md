@@ -321,12 +321,12 @@ JSON content may also be converted to dynamic lists.
 
 LISP conversion is the usage of the AST of a given language as a LISP dialect.
 
-#### 2.2.3.1 - Pure LISP Conversion
+##### 2.2.3.1 - Pure LISP Conversion
 
 Pure LISP conversion is where the derived dialect only uses token's from the given language's
 default syntax as operators, to the extent possible.
 
-#### 2.2.3.2 - LISP Conversion Conventions
+##### 2.2.3.2 - LISP Conversion Conventions
 
 Codified conventions for LISP converison are referred to as LISP conversion conventions.
 
