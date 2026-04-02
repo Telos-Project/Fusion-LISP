@@ -405,4 +405,5 @@ The context object shall be formatted as follows:
 
 A plugin may be distributed as a CommonJS module exporting an operator object list, or as an
 [APInt](https://github.com/Telos-Project/APInt) JSON file with multiple utilities linking to such
-CommonJS modules, identified with a "type" property containing the string "fusion-lisp".
+CommonJS modules, said utilities using the tags property protocol to specify "fusion-lisp" as their
+primary type.
