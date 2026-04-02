@@ -255,7 +255,7 @@ dynamic values can be called dynamic lists. These concepts may be applied beyond
 
 Dynamic list values, be they dynamic or not, may be indexed by index or key.
 
-###### 2.1.1.1.1 - Dynamic Paths
+###### 2.2.2.2.1 - Dynamic Paths
 
 A dynamic path is a list of strings and numeric atoms which dictate a path from a root dynamic list
 to a value nested therein.
@@ -268,7 +268,7 @@ Dynamic paths may either be applied in child mode or descendant mode. In the for
 only select from the immediate children of the values they are applied to. In the latter, they may
 select the nearest matching descendant as located using a breadth first traversal.
 
-###### 2.1.1.1.2 - Dynamic Metadata
+###### 2.2.2.2.2 - Dynamic Metadata
 
 Dynamic metadata is a dynamic list convention regarding meta dynamic lists. A meta dynamic list is
 a dynamic list used for assigning properties to another dynamic list, referred to as the content
@@ -292,7 +292,7 @@ For example:
 		))
 	)
 
-###### 2.1.1.1.4 - DLN
+###### 2.2.2.2.4 - DLN
 
 DLN (Dynamic List Notation) is a data interchange format where a file may contain a single lisp
 expression which resolves either to a list or to a string, number, boolean, or null primitive.
@@ -304,7 +304,7 @@ DLN may use any syntax that Fusion LISP uses, but by default, in strict form, it
 without the universal presprocessor. DLN may use the file extension "dln", and if in strict form,
 it may also use "dlns".
 
-###### 2.1.1.1.5 - JSON Conversion
+###### 2.2.2.2.5 - JSON Conversion
 
 When converting a dynamic list to JSON, a dynamic list with no dynamic values shall become a JSON
 list, and a dynamic list with dynamic values shall become a JSON object, with the order of the
@@ -317,22 +317,39 @@ other atoms shall become JSON strings.
 
 JSON content may also be converted to dynamic lists.
 
-#### 2.2.3 - LISP Conversion
+#### 2.2.3 - Hybrid LISP Dialects
 
-LISP conversion is the usage of the AST of a given language as a LISP dialect.
+A hybrid LISP dialect is a LISP dialect created by overlapping the operator sets of multiple
+existing LISP dialects.
 
-##### 2.2.3.1 - Pure LISP Conversion
+#### 2.2.4 - LISP Conversion
 
-Pure LISP conversion is where the derived dialect only uses token's from the given language's
-default syntax as operators, to the extent possible.
+LISP conversion is the usage of the AST of a given language as a LISP dialect, called a derived
+dialect.
 
-##### 2.2.3.2 - LISP Conversion Conventions
+##### 2.2.4.1 - Pure LISP Conversion
+
+Pure LISP conversion is where a derived dialect only uses token's from its base language's default
+syntax as operators, to the extent possible.
+
+##### 2.2.4.2 - Cross Code
+
+Cross code refers to contiguous bodies of code written in multiple incompatible languages. Cross
+code with indefinite language compatibility is referred to as omnicode.
+
+Cross code may be processed by using hybird dialects of multiple derived dialects as an IR for the
+various languages in the source code, and may implicitly employ FFIs to invoke dependencies.
+
+Significant comments, that is, comments which denote explicit metadata, may be using to explicitly
+specify which languages are used where in cross code. Otherwise, heuristics may be employed.
+
+##### 2.2.4.3 - LISP Conversion Conventions
 
 Codified conventions for LISP converison are referred to as LISP conversion conventions.
 
-#### 2.2.4 - Examples
+#### 2.2.5 - Examples
 
-##### 2.2.4.1 - Euler Problem #1
+##### 2.2.5.1 - Euler Problem #1
 
     (use "fusion-lisp")
 
