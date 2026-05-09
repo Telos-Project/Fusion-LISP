@@ -99,7 +99,10 @@ var fusionLISP = {
 
 		context.use = (path) => {
 
-			let item = use(path);
+			let item = use(
+				path.includes("://") ?
+					path : path.toLowerCase().split(" ").join("-")
+			);
 			
 			if(Array.isArray(item))
 				return item;
@@ -114,7 +117,7 @@ var fusionLISP = {
 				let result = { };
 				
 				apint.queryUtilities(
-					item, null, { type: "fusion-lisp" }
+					apint.buildAPInt(item), null, { type: "fusion-lisp" }
 				).forEach(item => Object.assign(
 					result,
 					use(
@@ -138,20 +141,21 @@ var fusionLISP = {
 			context.operators.push({
 				process: (context, args) => {
 
-					return context.local.operator == "use" ?
-						`${
-							args.map(item =>
-								`Object.values(context.use(${
-									item
-								})).forEach(
-									operator =>
-										context.operators.push(operator)
-								);`
-							).join("")
-						}context.recompile=true;context.index=${
-							JSON.stringify(context.current)
-						};return;` :
-						null;
+					return context.local.operator.toLowerCase().trim() ==
+						"use" ?
+							`${
+								args.map(item =>
+									`Object.values(context.use(${
+										fusionLISP.toJSONString(item)
+									})).forEach(
+										operator =>
+											context.operators.push(operator)
+									);`
+								).join("")
+							}context.recompile=true;context.index=${
+								JSON.stringify(context.current)
+							};return;` :
+							null;
 				},
 				tags: ["use"]
 			});
@@ -233,6 +237,16 @@ var fusionLISP = {
 		return fusionLISP.operate({
 			list: list, args: args != null ? args : []
 		}).value;
+	},
+	toJSONString(str) {
+		
+		try {
+			JSON.parse(str); return str;
+		}
+		
+		catch {
+			return JSON.stringify(str);
+		}
 	}
 };
 
