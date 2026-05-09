@@ -1,16 +1,33 @@
+function validate(str) {
+
+	if(str.includes("\n"))
+		return JSON.stringify(str);
+
+	try {
+
+		new Function(str);
+
+		return str;
+	}
+	
+	catch(error) {
+		return JSON.stringify(str);
+	}
+}
+
 module.exports = [
 	{
 		process: (context, args) => {
 
-			return context.local.operator == "add" ?
-				`(${args.join("+")})` : null;
+			return context.local.operator.toLowerCase().trim() == "add" ?
+				`(${args.map(arg => validate(arg)).join("+")})` : null;
 		},
 		tags: ["standard", "add"]
 	},
 	{
 		process: (context, args) => {
 
-			return context.local.operator == "and" ?
+			return context.local.operator.toLowerCase().trim() == "and" ?
 				`(${args.join("&&")})` : null;
 		},
 		tags: ["standard", "and"]
@@ -18,7 +35,7 @@ module.exports = [
 	{
 		process: (context, args) => {
 
-			return context.local.operator == "arguments" ?
+			return context.local.operator.toLowerCase().trim() == "arguments" ?
 				`Array.from(arguments).slice(1)` : null;
 		},
 		tags: ["standard", "arguments"]
@@ -26,9 +43,9 @@ module.exports = [
 	{
 		process: (context, args) => {
 
-			return context.local.operator == "at" ?
+			return context.local.operator.toLowerCase().trim() == "at" ?
 				`${
-					args[0]
+					validate(args[0])
 				}${
 					args.slice(1).map(item => `[${item}]`).join("")
 				}` :
@@ -39,7 +56,7 @@ module.exports = [
 	{
 		process: (context, args) => {
 
-			return context.local.operator == "break" ?
+			return context.local.operator.toLowerCase().trim() == "break" ?
 				(args.length > 0 ? `if(${args[0]})break;` : "break;") : null;
 		},
 		tags: ["standard", "break"]
@@ -47,7 +64,7 @@ module.exports = [
 	{
 		process: (context, args) => {
 
-			return context.local.operator == "define" ?
+			return context.local.operator.toLowerCase().trim() == "define" ?
 				`(...args)=>{let arguments=[null].concat(args);${
 					args.join("\n")
 				}}\n` : null;
@@ -57,7 +74,7 @@ module.exports = [
 	{
 		process: (context, args) => {
 
-			return context.local.operator == "divide" ?
+			return context.local.operator.toLowerCase().trim() == "divide" ?
 				`(${args.join("/")})` : null;
 		},
 		tags: ["standard", "divide"]
@@ -65,7 +82,7 @@ module.exports = [
 	{
 		process: (context, args) => {
 
-			return context.local.operator == "do" ?
+			return context.local.operator.toLowerCase().trim() == "do" ?
 				`${args[0]}(${args.slice(1).join(",")})\n` : null;
 		},
 		tags: ["standard", "do"]
@@ -73,7 +90,9 @@ module.exports = [
 	{
 		process: (context, args) => {
 
-			return context.local.operator == "equals" ?
+			args = args.map(arg => validate(arg));
+
+			return context.local.operator.toLowerCase().trim() == "equals" ?
 				`(${args.map((item, index) => {
 
 					return index < args.length - 1 ?
@@ -85,15 +104,15 @@ module.exports = [
 	{
 		process: (context, args) => {
 
-			return context.local.operator == "evaluate" ?
-				`eval(${args[0]})\n` : null;
+			return context.local.operator.toLowerCase().trim() == "evaluate" ?
+				`eval(${validate(args[0])})\n` : null;
 		},
 		tags: ["standard", "evaluate"]
 	},
 	{
 		process: (context, args) => {
 
-			return context.local.operator == "greater" ?
+			return context.local.operator.toLowerCase().trim() == "greater" ?
 				`(${args.map((item, index) => {
 
 					return index < args.length - 1 ?
@@ -105,7 +124,7 @@ module.exports = [
 	{
 		process: (context, args) => {
 
-			return context.local.operator == "less" ?
+			return context.local.operator.toLowerCase().trim() == "less" ?
 				`(${args.map((item, index) => {
 
 					return index < args.length - 1 ?
@@ -117,7 +136,9 @@ module.exports = [
 	{
 		process: (context, args) => {
 
-			return context.local.operator == "list" ?
+			args = args.map(arg => validate(arg));
+
+			return context.local.operator.toLowerCase().trim() == "list" ?
 				(
 					args.filter(item =>
 						item.startsWith(":{") && item.endsWith("}:")
@@ -144,7 +165,7 @@ module.exports = [
 	{
 		process: (context, args) => {
 
-			return context.local.operator == "loop" ?
+			return context.local.operator.toLowerCase().trim() == "loop" ?
 				(args.length > 0 ? `if(${args[0]})continue;` : "continue;") :
 				null;
 		},
@@ -153,7 +174,7 @@ module.exports = [
 	{
 		process: (context, args) => {
 
-			return context.local.operator == "multiply" ?
+			return context.local.operator.toLowerCase().trim() == "multiply" ?
 				`(${args.join("*")})` : null;
 		},
 		tags: ["standard", "multiply"]
@@ -161,7 +182,7 @@ module.exports = [
 	{
 		process: (context, args) => {
 
-			return context.local.operator == "modulus" ?
+			return context.local.operator.toLowerCase().trim() == "modulus" ?
 				`(${args.join("%")})` : null;
 		},
 		tags: ["standard", "modulus"]
@@ -169,7 +190,7 @@ module.exports = [
 	{
 		process: (context, args) => {
 
-			return context.local.operator == "not" ?
+			return context.local.operator.toLowerCase().trim() == "not" ?
 				`(${args.map(item => `!${item}`).join("&&")})` : null;
 		},
 		tags: ["standard", "not"]
@@ -177,7 +198,7 @@ module.exports = [
 	{
 		process: (context, args) => {
 
-			return context.local.operator == "on" ?
+			return context.local.operator.toLowerCase().trim() == "on" ?
 				`(${args[0]}).then((value)=>{(${args[1]})(value);})\n` : null;
 		},
 		tags: ["standard", "on"]
@@ -185,7 +206,7 @@ module.exports = [
 	{
 		process: (context, args) => {
 
-			return context.local.operator == "or" ?
+			return context.local.operator.toLowerCase().trim() == "or" ?
 				`(${args.join("||")})` : null;
 		},
 		tags: ["standard", "or"]
@@ -193,21 +214,30 @@ module.exports = [
 	{
 		process: (context, args) => {
 
-			return context.local.operator == "print" ?
-				`console.log(${args.join(",")});` : null;
+			return ["print", "log", "log line"].includes(
+				context.local.operator.toLowerCase().trim()
+			) ?
+				`console.log(${
+					args.map(arg => validate(arg)).join(",")
+				});` :
+				null;
 		},
 		tags: ["standard", "print"]
 	},
 	{
 		process: (context, args) => {
-			return context.local.operator == "random" ? `Math.random()` : null;
+
+			return context.local.operator.toLowerCase().trim() == "random" ?
+				`Math.random()` : null;
 		},
 		tags: ["standard", "random"]
 	},
 	{
 		process: (context, args) => {
 
-			return context.local.operator == "return" ?
+			args = args.map(arg => validate(arg));
+
+			return context.local.operator.toLowerCase().trim() == "return" ?
 				`context.value=${
 					args.length > 1 ? "[" : ""
 				}${
@@ -221,7 +251,7 @@ module.exports = [
 	{
 		process: (context, args) => {
 
-			return context.local.operator == "scope" ?
+			return context.local.operator.toLowerCase().trim() == "scope" ?
 				`while(true){${args.join(";")}break;}` : null;
 		},
 		tags: ["standard", "scope"]
@@ -229,13 +259,13 @@ module.exports = [
 	{
 		process: (context, args) => {
 
-			return context.local.operator == "set" ?
+			return context.local.operator.toLowerCase().trim() == "set" ?
 				(context.state[args[0]] != null ?
 					`${args[0]}=context.state[${args[0]}];` :
 					`${
 						args[0]
 					}=${
-						args[1]
+						validate(args[1])
 					};context.state["${
 						args[0]
 					}"]=${
@@ -248,15 +278,15 @@ module.exports = [
 	{
 		process: (context, args) => {
 
-			return context.local.operator == "size" ?
-				`(${args[0]}).length` : null;
+			return context.local.operator.toLowerCase().trim() == "size" ?
+				`(${validate(args[0])}).length` : null;
 		},
 		tags: ["standard", "size"]
 	},
 	{
 		process: (context, args) => {
 
-			return context.local.operator == "subtract" ?
+			return context.local.operator.toLowerCase().trim() == "subtract" ?
 				`(${args.join("-")})` : null;
 		},
 		tags: ["standard", "subtract"]
@@ -264,7 +294,7 @@ module.exports = [
 	{
 		process: (context, args) => {
 
-			return context.local.operator == "xor" ?
+			return context.local.operator.toLowerCase().trim() == "xor" ?
 				`(${args.join("^")})` : null;
 		},
 		tags: ["standard", "xor"]
@@ -272,7 +302,7 @@ module.exports = [
 	{
 		process: (context, args) => {
 
-			return context.local.operator == ":" ?
+			return context.local.operator.trim() == ":" ?
 				`:{"key":${
 					JSON.stringify("" + args[0])
 				},"value":${

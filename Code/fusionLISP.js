@@ -73,6 +73,19 @@ var fusionLISP = {
 
 		return null;
 	},
+	isValidJS: (code) => {
+
+		try {
+
+			new Function(code);
+
+			return true;
+		}
+		
+		catch(error) {
+			return false;
+		}
+	},
 	onPath: (index, current) => {
 
 		let len = Math.min(index.length, current.length);
@@ -146,7 +159,8 @@ var fusionLISP = {
 							`${
 								args.map(item =>
 									`Object.values(context.use(${
-										fusionLISP.toJSONString(item)
+										fusionLISP.isValidJS(item) ?
+											item : JSON.stringify(item)
 									})).forEach(
 										operator =>
 											context.operators.push(operator)
@@ -237,16 +251,6 @@ var fusionLISP = {
 		return fusionLISP.operate({
 			list: list, args: args != null ? args : []
 		}).value;
-	},
-	toJSONString(str) {
-		
-		try {
-			JSON.parse(str); return str;
-		}
-		
-		catch {
-			return JSON.stringify(str);
-		}
 	}
 };
 
