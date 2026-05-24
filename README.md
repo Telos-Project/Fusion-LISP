@@ -178,14 +178,14 @@ The list operator returns a list of all of its arguments.
 The "loop" operator resets and continues the current scope. It may take a boolean argument, which
 will prevent its effect if false.
 
-###### 2.2.2.1.15 - multiply
-
-The "multiply" operator returns the product of its arguments.
-
-###### 2.2.2.1.16 - modulus
+###### 2.2.2.1.15 - modulus
 
 The "modulus" operator applies the modulus operation to its arguments in order and returns the
 result.
+
+###### 2.2.2.1.16 - multiply
+
+The "multiply" operator returns the product of its arguments.
 
 ###### 2.2.2.1.17 - not
 
