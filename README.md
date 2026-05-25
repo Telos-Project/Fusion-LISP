@@ -292,7 +292,7 @@ For example:
 		))
 	)
 
-###### 2.2.2.2.4 - DLN
+###### 2.2.2.2.3 - DLN
 
 DLN (Dynamic List Notation) is a data interchange format where a file may contain a single lisp
 expression which resolves either to a list or to a string, number, boolean, or null primitive.
@@ -304,7 +304,7 @@ DLN may use any syntax that Fusion LISP uses, but by default, in strict form, it
 without the universal presprocessor. DLN may use the file extension "dln", and if in strict form,
 it may also use "dlns".
 
-###### 2.2.2.2.5 - JSON Conversion
+###### 2.2.2.2.4 - JSON Conversion
 
 When converting a dynamic list to JSON, a dynamic list with no dynamic values shall become a JSON
 list, and a dynamic list with dynamic values shall become a JSON object, with the order of the
