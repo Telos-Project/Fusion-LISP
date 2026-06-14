@@ -1,17 +1,44 @@
 function validate(str) {
 
-	if(str.includes("\n"))
-		return JSON.stringify(str);
+	if(str.startsWith(":{") && str.endsWith("}:"))
+		return str;
 
 	try {
 
-		new Function(str);
+		JSON.parse(str);
 
 		return str;
 	}
 	
 	catch(error) {
-		return JSON.stringify(str);
+
+		try {
+
+			new Function(str);
+
+			try {
+
+				new Function(
+					str.split("\n").map(
+						line => line.trim()
+					).filter(
+						line => line != ""
+					).map(
+						line => `var ${line}`
+					).join("\n")
+				);
+
+				return JSON.stringify(str);
+			}
+
+			catch(error) {
+				return str;
+			}
+		}
+		
+		catch(error) {
+			return JSON.stringify(str);
+		}
 	}
 }
 
