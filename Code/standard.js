@@ -16,24 +16,7 @@ function validate(str) {
 
 			new Function(str);
 
-			try {
-
-				new Function(
-					str.split("\n").map(
-						line => line.trim()
-					).filter(
-						line => line != ""
-					).map(
-						line => `var ${line}`
-					).join("\n")
-				);
-
-				return JSON.stringify(str);
-			}
-
-			catch(error) {
-				return str;
-			}
+			return str;
 		}
 		
 		catch(error) {

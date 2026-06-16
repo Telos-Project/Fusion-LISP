@@ -71,7 +71,21 @@ var fusionLISP = {
 				return operation;
 		}
 
-		return null;
+		args = args.filter(arg => {
+
+			try {
+
+				new Function(arg);
+
+				return true;
+			}
+
+			catch(error) {
+				return false;
+			}
+		});
+
+		return args.length == 0 ? null : `{${args.join("\n")}}`;
 	},
 	isValidJS: (code) => {
 
@@ -89,6 +103,9 @@ var fusionLISP = {
 	onPath: (index, current) => {
 
 		let len = Math.min(index.length, current.length);
+
+		if(current.length < index.length)
+			return false;
 
 		if(len == 0)
 			return false;
