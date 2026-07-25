@@ -367,8 +367,8 @@ require("fusion-lisp/fusionLISP.js").run(`
 
 let result = require("fusion-lisp/fusionLISP.js").run(`
 	(use "fusion-lisp")
-	(return 5)
-`);
+	(return (add (at arguments 0) (at arguments 1)))
+`, [2, 3]);
 
 console.log(result);
 ```
